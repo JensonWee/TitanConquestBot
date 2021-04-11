@@ -8,7 +8,7 @@ import ctypes  # An included library with Python install.
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-options.headless = False
+options.headless = True
 
 driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
 driver.get("https://titanconquest.com/")
