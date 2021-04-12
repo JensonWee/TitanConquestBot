@@ -3,11 +3,13 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 import time
 import ctypes  # An included library with Python install.
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
+options.add_argument('--window-size=1920,1080');
 options.headless = True
 
 driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
@@ -55,8 +57,10 @@ def printStatus():
     print(20*"=" );
 
 def setLuckDay():
-    checkLuc = driver.find_elements_by_xpath('''//*[starts-with(.,"It's")]''');
-    if len(checkLuc) > 0 :
+    driver.get_screenshot_as_file('setLuck.png');
+    checkLuc = driver.find_elements_by_xpath('''//*[starts-with(.,"It's you")]''');
+    if len(checkLuc) > 0:
+        sleepShort();
         if luckyday.lower() == "xp" or luckyday.lower() == "lp":
             print("Setting : " + luckyday.lower())
             setLuckBar = driver.find_element_by_xpath("//*[text()='+ "+luckyday.upper()+"']");
@@ -75,7 +79,11 @@ def goPatrol():
     patrolBar = driver.find_element_by_xpath("//*[starts-with(.,'Patrol')]");
     patrolBar.click();
     loadPage();
-    setLuckDay()
+    setLuckDay();
+    loadPage()
+    showHide = driver.find_element_by_xpath("//*[starts-with(.,'Show/')]");
+    showHide.click();
+    sleepShort();
 
 def grindPatrol(arg1):
     location = driver.find_element_by_xpath('//*[starts-with(.,"Patrolling")]');
@@ -83,7 +91,7 @@ def grindPatrol(arg1):
     print(10*'=');
     if(arg1):
         for i in range(5000):
-            selectMob();
+            selectMob1();
             sleepShort()
             mobDeath = False;
             while mobDeath == False:
@@ -92,7 +100,8 @@ def grindPatrol(arg1):
             print(10*'=');
             loadPage();
     else:
-        selectMob();
+        sleepShort();
+        selectMob1();
         sleepShort()
         mobDeath = False;
         while mobDeath == False:
@@ -102,7 +111,8 @@ def grindPatrol(arg1):
         loadPage();
 
 
-def selectMob():
+def selectMob1():
+    driver.get_screenshot_as_file('capture.png');
     mobBar = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']");
     mobName = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']//div//div[@class='item-title']");
     if(mobName[1].text.startswith('Sacred')):
@@ -111,6 +121,27 @@ def selectMob():
     else:
         print("Selecting Mob : "+mobName[1].text);
         mobBar[1].click();
+
+def reRoute():
+    driver.get_screenshot_as_file('capture.png');
+    goToBar = driver.find_elements_by_xpath("//*[starts-with(.,'Go to')]");
+    goToBar[2].click();
+    print("Rerouting.....");
+
+def selectMob(Mob,arg2):
+    driver.get_screenshot_as_file('capture.png');
+    mobBar = driver.find_elements_by_xpath("//div[@class='item-title'][starts-with(text(),'"+Mob+"')]/..");
+    mobName = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']//div//div[@class='item-title']");
+    lookAroundBar = driver.find_element_by_xpath("//*[starts-with(.,'Look around')]/..");
+    print("Finding Mob : "+Mob);
+    if len(mobBar) > 0:
+        mobBar[0].click();
+        sleepShort();
+        return True;
+    else:
+        lookAroundBar.click();
+        loadPage();
+        return False;
 
 def checkDefeatedMob():
     defeatBar = driver.find_elements_by_xpath("//*[starts-with(.,'Back to')]");
@@ -127,10 +158,12 @@ def primaryAttack():
     primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Primary')]");
     if(len(primaryAtkBar) > 0 ):
         print("Primary Attacking...");
+        sleepShort()
         primaryAtkBar[0].click();
     else:
         primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Hit it')]");
         print("Hitting it...");
+        sleepShort()
         primaryAtkBar[0].click();
 
 def checkDeath():
@@ -150,6 +183,41 @@ def fightMob():
         sleepShort();
         if checkDeath():
             return True
+def grindBounty(arg1, Mob, arg2):
+    location = driver.find_element_by_xpath('//*[starts-with(.,"Patrolling")]');
+    print("Current Location : " + location.text.strip().replace("Patrolling ", ""));
+    print(10*'=');
+    found = False;
+    if(arg1):
+        for i in range(5000):
+            counter = 0;
+            found = False;
+            while found == False:
+                found = selectMob(Mob,arg2);
+                counter+=1;
+                if(arg2 == True and counter == 10):
+                    reRoute();
+                    loadPage();
+            sleepShort()
+            sleepShort()
+            mobDeath = False;
+            while mobDeath == False:
+                if fightMob():
+                    mobDeath = True;
+            print(10*'=');
+            loadPage();
+    else:
+        sleepShort();
+        while found == False:
+            found = selectMob(Mob,arg2);
+            sleepShort()
+        mobDeath = False;
+        while mobDeath == False:
+            if fightMob():
+                mobDeath = True;
+        print(10*'=');
+        loadPage();
+
 
 username = ""
 password = ""
@@ -157,6 +225,7 @@ luckyday = "drachma" #xp/lp/drachma
 logIn();
 printStatus();
 goPatrol();
+#grindBounty(True, "Nymph Leader", True);
 grindPatrol(True);
 alertMSG('Task', 'Completed!', 1)
 driver.quit();
