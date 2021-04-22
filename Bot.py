@@ -57,7 +57,7 @@ def printStatus():
     print(20*"=" );
 
 def setLuckDay():
-    driver.get_screenshot_as_file('setLuck.png');
+    driver.get_screenshot_as_file('./Screenshot/setLuck.png');
     checkLuc = driver.find_elements_by_xpath('''//*[starts-with(.,"It's you")]''');
     if len(checkLuc) > 0:
         sleepShort();
@@ -76,7 +76,7 @@ def setLuckDay():
     else:
         print("No Luck Day");
 def goPatrol():
-    driver.get_screenshot_as_file('goPatrol.png');
+    driver.get_screenshot_as_file('./Screenshot/goPatrol.png');
     patrolBar = driver.find_element_by_xpath("//*[starts-with(.,'Patrol')]");
     patrolBar.click();
     loadPage();
@@ -115,7 +115,7 @@ def grindPatrol(arg1):
 
 
 def selectMob1():
-    driver.get_screenshot_as_file('capture.png');
+    driver.get_screenshot_as_file('./Screenshot/selectMob1.png');
     mobBar = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']");
     mobName = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']//div//div[@class='item-title']");
     if(mobName[1].text.startswith('Sacred')):
@@ -126,13 +126,13 @@ def selectMob1():
         mobBar[1].click();
 
 def reRoute():
-    driver.get_screenshot_as_file('capture.png');
+    driver.get_screenshot_as_file('./Screenshot/reroute.png');
     goToBar = driver.find_elements_by_xpath("//li[@class='widebg']//*[starts-with(.,'Go to')]");
     goToBar[0].click();
     print("Rerouting.....");
 
 def selectMob(Mob,arg2):
-    driver.get_screenshot_as_file('capture.png');
+    driver.get_screenshot_as_file('./Screenshot/selectMob.png');
     mobBar = driver.find_elements_by_xpath("//div[@class='item-title'][starts-with(text(),'"+Mob+"')]/..");
     mobName = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']//div//div[@class='item-title']");
     lookAroundBar = driver.find_element_by_xpath("//*[starts-with(.,'Look around')]/..");
@@ -148,7 +148,7 @@ def selectMob(Mob,arg2):
         return False;
 
 def checkDefeatedMob():
-    driver.get_screenshot_as_file('defeated.png');
+    driver.get_screenshot_as_file('./Screenshot/defeated.png');
     sleepShort();
     defeatBar = driver.find_elements_by_xpath("//*[starts-with(.,'Back to')]");
     if len(defeatBar) > 0:
@@ -162,7 +162,7 @@ def mobStatus():
 
 def primaryAttack():
     sleepShort()
-    driver.get_screenshot_as_file('primaryAtk.png');
+    driver.get_screenshot_as_file('./Screenshot/primaryAtk.png');
     primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Primary')]/..");
     if(len(primaryAtkBar) > 0 ):
         print("Primary Attacking...");
@@ -174,7 +174,7 @@ def primaryAttack():
         primaryAtkBar[0].click();
 def heavyAttack():
     sleepShort()
-    driver.get_screenshot_as_file('heavuAtk.png');
+    driver.get_screenshot_as_file('./Screenshot/heavuAtk.png');
     heavyAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Heavy (')]/..");
     dazedText = driver.find_elements_by_xpath("//*[contains(text(), 'DAZED')]");
     if(len(heavyAtkBar) > 0 ):
