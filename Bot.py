@@ -76,14 +76,17 @@ def setLuckDay():
     else:
         print("No Luck Day");
 def goPatrol():
+    driver.get_screenshot_as_file('goPatrol.png');
     patrolBar = driver.find_element_by_xpath("//*[starts-with(.,'Patrol')]");
     patrolBar.click();
     loadPage();
     setLuckDay();
     loadPage()
     showHide = driver.find_element_by_xpath("//*[starts-with(.,'Show/')]");
-    showHide.click();
-    sleepShort();
+    findBounty = driver.find_elements_by_xpath("//*[@style='display: none;']//*[starts-with(text(),'Bounty')]")
+    if len(findBounty) == 0:
+        showHide.click();
+        sleepShort();
 
 def grindPatrol(arg1):
     location = driver.find_element_by_xpath('//*[starts-with(.,"Patrolling")]');
@@ -124,8 +127,8 @@ def selectMob1():
 
 def reRoute():
     driver.get_screenshot_as_file('capture.png');
-    goToBar = driver.find_elements_by_xpath("//*[starts-with(.,'Go to')]");
-    goToBar[2].click();
+    goToBar = driver.find_elements_by_xpath("//li[@class='widebg']//*[starts-with(.,'Go to')]");
+    goToBar[0].click();
     print("Rerouting.....");
 
 def selectMob(Mob,arg2):
@@ -134,16 +137,19 @@ def selectMob(Mob,arg2):
     mobName = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']//div//div[@class='item-title']");
     lookAroundBar = driver.find_element_by_xpath("//*[starts-with(.,'Look around')]/..");
     print("Finding Mob : "+Mob);
+    loadPage();
     if len(mobBar) > 0:
         mobBar[0].click();
         sleepShort();
         return True;
     else:
         lookAroundBar.click();
-        loadPage();
+        sleepShort();
         return False;
 
 def checkDefeatedMob():
+    driver.get_screenshot_as_file('defeated.png');
+    sleepShort();
     defeatBar = driver.find_elements_by_xpath("//*[starts-with(.,'Back to')]");
     if len(defeatBar) > 0:
         defeatBar[0].click()
@@ -155,16 +161,34 @@ def mobStatus():
     print("Mob name : " + mobName);
 
 def primaryAttack():
-    primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Primary')]");
+    sleepShort()
+    driver.get_screenshot_as_file('primaryAtk.png');
+    primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Primary')]/..");
     if(len(primaryAtkBar) > 0 ):
         print("Primary Attacking...");
-        sleepShort()
         primaryAtkBar[0].click();
     else:
         primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Hit it')]");
         print("Hitting it...");
         sleepShort()
         primaryAtkBar[0].click();
+def heavyAttack():
+    sleepShort()
+    driver.get_screenshot_as_file('heavuAtk.png');
+    heavyAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Heavy (')]/..");
+    dazedText = driver.find_elements_by_xpath("//*[contains(text(), 'DAZED')]");
+    if(len(heavyAtkBar) > 0 ):
+        print("Heavy Attacking...");
+        if(len(dazedText) > 0) :
+            sleepShort();
+            primaryAttack();
+        else:
+            heavyAtkBar[0].click();
+    else:
+        heavyAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Hit it')]");
+        print("Hitting it...");
+        sleepShort()
+        heavyAtkBar[0].click();
 
 def checkDeath():
     respawnBar = driver.find_elements_by_xpath("//*[starts-with(.,'Respawn where')]");
@@ -179,7 +203,8 @@ def fightMob():
         print("Mob defeated.")
         return True
     else:
-        primaryAttack();
+        #primaryAttack();
+        heavyAttack();
         sleepShort();
         if checkDeath():
             return True
@@ -187,6 +212,7 @@ def grindBounty(arg1, Mob, arg2):
     location = driver.find_element_by_xpath('//*[starts-with(.,"Patrolling")]');
     print("Current Location : " + location.text.strip().replace("Patrolling ", ""));
     print(10*'=');
+    mobCount = 0;
     found = False;
     if(arg1):
         for i in range(5000):
@@ -195,17 +221,18 @@ def grindBounty(arg1, Mob, arg2):
             while found == False:
                 found = selectMob(Mob,arg2);
                 counter+=1;
-                if(arg2 == True and counter == 10):
+                if(arg2 == True and counter >= 5 and found == False):
                     reRoute();
-                    loadPage();
-            sleepShort()
+                sleepShort()
             sleepShort()
             mobDeath = False;
             while mobDeath == False:
                 if fightMob():
                     mobDeath = True;
             print(10*'=');
-            loadPage();
+            mobCount+=1;
+            sleepShort()
+            print(Mob + " has been killed " + str(mobCount) + " times.");
     else:
         sleepShort();
         while found == False:
@@ -216,7 +243,7 @@ def grindBounty(arg1, Mob, arg2):
             if fightMob():
                 mobDeath = True;
         print(10*'=');
-        loadPage();
+        sleepShort()
 
 
 username = ""
@@ -225,7 +252,9 @@ luckyday = "drachma" #xp/lp/drachma
 logIn();
 printStatus();
 goPatrol();
-#grindBounty(True, "Nymph Leader", True);
+#grindBounty(True, "Chiron Knight", True);
 grindPatrol(True);
 alertMSG('Task', 'Completed!', 1)
 driver.quit();
+#taskkill /F /IM "chrome.exe"
+#taskkill /F /IM "chromedriver.exe"
