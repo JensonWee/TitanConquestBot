@@ -27,8 +27,6 @@ options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument('--window-size=1920,1080');
 options.headless = True
 driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
-def alertMSG(title, text, style):
-    return ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
 def loadPage():
     time.sleep(3);
@@ -72,7 +70,9 @@ def printStatus():
 def setLuckDay():
     driver.get_screenshot_as_file('./Screenshot/setLuck.png');
     checkLuc = driver.find_elements_by_xpath('''//*[starts-with(.,"It's you")]''');
+    print('Checking for Lucky Day...')
     if len(checkLuc) > 0:
+        print("Luck Day Set");
         sleepShort();
         if luckyday.lower() == "xp" or luckyday.lower() == "lp":
             print("Setting : " + luckyday.lower())
@@ -112,6 +112,7 @@ def grindPatrol(arg1):
     print(10*'=');
     if(arg1):
         for i in range(5000):
+            setLuckDay();
             selectMob1();
             sleepShort()
             mobDeath = False;
