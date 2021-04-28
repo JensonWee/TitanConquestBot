@@ -243,10 +243,13 @@ def smartAttack():
 
 def checkSpecialStatus():
     heartFillIcon = driver.find_elements_by_xpath("//*[contains(text(), 'heart_fill')]/..");
-    if(len(heartFillIcon) > 0):
-        print("Uses Remedy...");
-        sleepShort();
-        heartFillIcon[0].click();
+    for i in range(10):
+        if(len(heartFillIcon) > 0):
+            print("Uses Remedy...");
+            sleepShort();
+            heartFillIcon[0].click();
+        else:
+            break;
 
 def checkDeath():
     respawnBar = driver.find_elements_by_xpath("//*[starts-with(.,'Respawn where')]");
