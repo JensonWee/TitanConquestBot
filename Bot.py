@@ -92,12 +92,15 @@ def setLuckDay():
 def goPatrol():
     driver.get_screenshot_as_file('./Screenshot/goPatrol.png');
     patrolBar = driver.find_elements_by_xpath("//*[starts-with(.,'Patrol')]");
-    goBackBar = driver.find_elements_by_xpath("//*[starts-with(.,'Go back to')]/..");
+    goBackBar = driver.find_elements_by_xpath("//*[starts-with(.,'Go back to')]/../..");
     if(len(patrolBar) > 0):
         patrolBar[0].click();
     else:
         html = driver.find_elements_by_xpath("//div[@class='page-content']");
-        driver.execute_script('arguments[0].scrollTop = 1080', html[1])
+        driver.execute_script('arguments[0].scrollTop = 1080', html[1]);
+        loadPage();
+        loadPage();
+        print("Clicking Go Back To...");
         goBackBar[0].click();
     loadPage();
     setLuckDay();
@@ -265,6 +268,9 @@ def checkDeath():
 def fightMob():
     if (checkDefeatedMob()):
         print("Mob defeated.")
+        return True
+    elif checkDeath == True:
+        print("You're instant dead.")
         return True
     else:
         #primaryAttack();
