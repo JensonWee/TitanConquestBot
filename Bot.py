@@ -34,7 +34,7 @@ def loadPage():
     time.sleep(3);
 def sleepShort():
     time.sleep(1);
-def logIn(headless):
+def logIn():
     #Remove Notification
     #myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH,  "//button[text()='No Thanks']")))
     driver.get("https://titanconquest.com/")
