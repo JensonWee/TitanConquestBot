@@ -1,0 +1,3 @@
+username = ""
+password = ""
+luckyday = "drachma" #xp/lp/drachma

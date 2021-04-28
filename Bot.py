@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import ctypes  # An included library with Python install.
-import os
+import os, re
 
 
 def printStartMsg():
@@ -90,8 +90,12 @@ def setLuckDay():
         print("No Luck Day");
 def goPatrol():
     driver.get_screenshot_as_file('./Screenshot/goPatrol.png');
-    patrolBar = driver.find_element_by_xpath("//*[starts-with(.,'Patrol')]");
-    patrolBar.click();
+    patrolBar = driver.find_elements_by_xpath("//*[starts-with(.,'Patrol')]");
+    goBackBar = driver.find_elements_by_xpath("//*[starts-with(.,'Go back to')]/..");
+    if(len(patrolBar) > 0):
+        patrolBar[0].click();
+    else:
+        goBackBar[0].click();
     loadPage();
     setLuckDay();
     loadPage()
@@ -205,12 +209,14 @@ def heavyAttack():
         heavyAtkBar[0].click();
 
 def smartAttack():
+    driver.get_screenshot_as_file('./Screenshot/smartAtk.png');
     shieldBar = driver.find_elements_by_xpath("//div[@class='progress shield']");
     heavyAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Heavy (')]/..");
     hitAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Hit it')]");
-    flareAtkBar = driver.find_elements_by_xpath("//span[starts-with(.,'Flare Bomb (')]/..");
+    flareAtkBar = driver.find_elements_by_xpath("//span[@class='actionimg'][starts-with(.,'Flare Bomb')]/..");
     primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Primary')]/..");
     specialAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Special (')]/..");
+    sleepShort()
     checkSpecialStatus(); #Uses remedy
     if len(shieldBar) > 0:
         sleepShort();
@@ -237,6 +243,7 @@ def smartAttack():
 def checkSpecialStatus():
     heartFillIcon = driver.find_elements_by_xpath("//*[contains(text(), 'heart_fill')]/..");
     if(len(heartFillIcon) > 0):
+        print("Uses Remedy...");
         sleepShort();
         heartFillIcon[0].click();
 
@@ -296,12 +303,14 @@ def grindBounty(arg1, Mob, arg2):
         print(10*'=');
         sleepShort()
 
-
-username = ""
-password = ""
-luckyday = "drachma" #xp/lp/drachma
+f = open("UserOptions.txt", "r")
+username = re.findall(r'\".*?\"', f.readline())[0].replace('"', '');
+password = re.findall(r'\".*?\"', f.readline())[0].replace('"', '');
+luckyday = re.findall(r'\".*?\"', f.readline())[0].replace('"', '');
+printStartMsg()
 logIn();
 printStatus();
 goPatrol();
 #grindBounty(True, "Chiron Knight", True);
 grindPatrol(True);
+
