@@ -144,9 +144,9 @@ def selectMob1():
     mobBar = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']");
     mobName = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']//div//div[@class='item-title']");
     for i in range(10):
-        if(not mobName[i+1].text.startswith('Sacred')):
-            print("Selecting Mob : "+mobName[i+1].text);
-            mobBar[i+1].click();
+        if(not mobName[i+2].text.startswith('Sacred')):
+            print("Selecting Mob : "+mobName[i+2].text);
+            mobBar[i+2].click();
             break;
 
 
@@ -223,7 +223,7 @@ def smartAttack():
     flareAtkBar = driver.find_elements_by_xpath("//span[@class='actionimg'][starts-with(.,'Flare Bomb')]/..");
     primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Primary')]/..");
     specialAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Special (')]/..");
-    sleepShort()
+    loadPage()
     checkSpecialStatus(); #Uses remedy
     if len(shieldBar) > 0:
         sleepShort();
@@ -248,6 +248,7 @@ def smartAttack():
             primaryAtkBar[0].click();
 
 def checkSpecialStatus():
+    driver.get_screenshot_as_file('./Screenshot/remedy.png');
     heartFillIcon = driver.find_elements_by_xpath("//*[contains(text(), 'heart_fill')]/..");
     for i in range(10):
         if(len(heartFillIcon) > 0):
@@ -258,9 +259,10 @@ def checkSpecialStatus():
             break;
 
 def checkDeath():
-    respawnBar = driver.find_elements_by_xpath("//*[starts-with(.,'Respawn where')]");
+    respawnBar = driver.find_elements_by_xpath("//*[starts-with(.,'Respawn where')]/..");
     if len(respawnBar) > 0 :
         print("You died.");
+        sleepShort();
         respawnBar[0].click();
         return True;
     else:
@@ -277,7 +279,7 @@ def fightMob():
         #heavyAttack();
         smartAttack();
         sleepShort();
-        if checkDeath():
+        if checkDeath() == True:
             return True
 def grindBounty(arg1, Mob, arg2):
     location = driver.find_element_by_xpath('//*[starts-with(.,"Patrolling")]');
