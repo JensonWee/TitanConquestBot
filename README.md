@@ -6,7 +6,7 @@ Instructions:
 1) Open UserOptions.txt and input username,password,luckyday options
 2) Open CMD
 3) cd to where folder is
-4) Command "python Bot.py"
+4) Command "python Bot.py" or just run "Bot.exe"
 
 Requirement:
 Visit any map with monster.
