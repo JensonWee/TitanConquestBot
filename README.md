@@ -3,13 +3,14 @@ Runs on Python.
 Install Python & Selenium
 
 Instructions:
-1) Open CMD
-2) cd to where folder is
-3) Command "python Bot.py"
+1) Open UserOptions.txt and input username,password,luckyday options
+2) Open CMD
+3) cd to where folder is
+4) Command "python Bot.py"
 
 Requirement:
 Visit any map with monster.
-Edit Bot.py's username, password and luckyday
+Edit UserOptions.txt's username, password and luckyday
 
 What does bot do?
 1) Bot will log in your account using chrome (in the background).
