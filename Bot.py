@@ -6,15 +6,27 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import ctypes  # An included library with Python install.
+import os
 
+
+def printStartMsg():
+    print("======================Titan Conquest Bot v1.4=========================");
+    print("Written by JensonWee(GitHub)");
+    print("Free Usage for all :)")
+    print ("=" * 20)
+
+def cleanUpProcess():
+    print("=============Process Clean up==================");
+    os.system('taskkill /F /IM "chrome.exe"');
+    os.system('taskkill /F /IM "chromedriver.exe"');
+    print("="*10)
+
+cleanUpProcess();
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument('--window-size=1920,1080');
 options.headless = True
-
 driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
-driver.get("https://titanconquest.com/")
-
 def alertMSG(title, text, style):
     return ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
@@ -22,9 +34,10 @@ def loadPage():
     time.sleep(3);
 def sleepShort():
     time.sleep(1);
-def logIn():
+def logIn(headless):
     #Remove Notification
     #myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH,  "//button[text()='No Thanks']")))
+    driver.get("https://titanconquest.com/")
     loadPage();
     notiButton = driver.find_elements_by_xpath("//button[text()='No Thanks']");
     if len(notiButton) > 0 :
@@ -82,10 +95,11 @@ def goPatrol():
     loadPage();
     setLuckDay();
     loadPage()
-    showHide = driver.find_element_by_xpath("//*[starts-with(.,'Show/')]");
+    showHide = driver.find_elements_by_xpath("//*[starts-with(.,'Show/')]");
     findBounty = driver.find_elements_by_xpath("//*[@style='display: none;']//*[starts-with(text(),'Bounty')]")
     if len(findBounty) == 0:
-        showHide.click();
+        if len(showHide) > 0:
+            showHide[0].click();
         sleepShort();
 
 def grindPatrol(arg1):
@@ -118,12 +132,12 @@ def selectMob1():
     driver.get_screenshot_as_file('./Screenshot/selectMob1.png');
     mobBar = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']");
     mobName = driver.find_elements_by_xpath("//ul[@id='enemyList']//*//div[@class='item-content']//div//div[@class='item-title']");
-    if(mobName[1].text.startswith('Sacred')):
-        print("Selecting Mob : "+mobName[2].text);
-        mobBar[2].click();
-    else:
-        print("Selecting Mob : "+mobName[1].text);
-        mobBar[1].click();
+    for i in range(10):
+        if(not mobName[i+1].text.startswith('Sacred')):
+            print("Selecting Mob : "+mobName[i+1].text);
+            mobBar[i+1].click();
+            break;
+
 
 def reRoute():
     driver.get_screenshot_as_file('./Screenshot/reroute.png');
@@ -190,6 +204,42 @@ def heavyAttack():
         sleepShort()
         heavyAtkBar[0].click();
 
+def smartAttack():
+    shieldBar = driver.find_elements_by_xpath("//div[@class='progress shield']");
+    heavyAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Heavy (')]/..");
+    hitAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Hit it')]");
+    flareAtkBar = driver.find_elements_by_xpath("//span[starts-with(.,'Flare Bomb (')]/..");
+    primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Primary')]/..");
+    specialAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Special (')]/..");
+    checkSpecialStatus(); #Uses remedy
+    if len(shieldBar) > 0:
+        sleepShort();
+        print("Special Attacking...");
+        specialAtkBar[0].click();
+    else:
+        if len(flareAtkBar) > 0:
+            sleepShort();
+            print("Flare Bombing...");
+            flareAtkBar[0].click();
+        elif len(heavyAtkBar) >0:
+            sleepShort();
+            print("Heavy Attacking...");
+            heavyAtkBar[0].click();
+        elif len(hitAtkBar) > 0:
+            sleepShort();
+            print("Hitting it...");
+            hitAtkBar[0].click();
+        else:
+            sleepShort();
+            print("Primary Attacking...");
+            primaryAtkBar[0].click();
+
+def checkSpecialStatus():
+    heartFillIcon = driver.find_elements_by_xpath("//*[contains(text(), 'heart_fill')]/..");
+    if(len(heartFillIcon) > 0):
+        sleepShort();
+        heartFillIcon[0].click();
+
 def checkDeath():
     respawnBar = driver.find_elements_by_xpath("//*[starts-with(.,'Respawn where')]");
     if len(respawnBar) > 0 :
@@ -204,7 +254,8 @@ def fightMob():
         return True
     else:
         #primaryAttack();
-        heavyAttack();
+        #heavyAttack();
+        smartAttack();
         sleepShort();
         if checkDeath():
             return True
@@ -254,7 +305,3 @@ printStatus();
 goPatrol();
 #grindBounty(True, "Chiron Knight", True);
 grindPatrol(True);
-alertMSG('Task', 'Completed!', 1)
-driver.quit();
-#taskkill /F /IM "chrome.exe"
-#taskkill /F /IM "chromedriver.exe"
