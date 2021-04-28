@@ -26,7 +26,7 @@ cleanUpProcess();
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument('--window-size=1920,1080');
-options.headless = False
+options.headless = True
 driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
 
 def loadPage():
