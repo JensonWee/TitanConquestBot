@@ -11,10 +11,10 @@ import os, re
 
 
 def printStartMsg():
-    print("======================Titan Conquest Bot v1.4=========================");
+    print("======================Titan Conquest Bot v3 =========================");
     print("Written by JensonWee(GitHub)");
     print("Free Usage for all :)")
-    print ("=" * 20)
+    print ("=" * 70)
 
 def cleanUpProcess():
     print("=============Process Clean up==================");
