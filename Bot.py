@@ -30,9 +30,9 @@ options.headless = True
 driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
 
 def loadPage():
-    time.sleep(3);
+    time.sleep(2);
 def sleepShort():
-    time.sleep(1);
+    time.sleep(0.5);
 def logIn():
     #Remove Notification
     #myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH,  "//button[text()='No Thanks']")))
@@ -220,7 +220,7 @@ def smartAttack():
     shieldBar = driver.find_elements_by_xpath("//div[@class='progress shield']");
     heavyAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Heavy (')]/..");
     hitAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Hit it')]");
-    flareAtkBar = driver.find_elements_by_xpath("//span[@class='actionimg'][starts-with(.,'Flare Bomb')]/..");
+    flareAtkBar = driver.find_elements_by_xpath("//span[@class='actionimg'][starts-with(.,'Flare Bomb')]");
     primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Primary')]/..");
     specialAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Special (')]/..");
     loadPage()
@@ -232,8 +232,12 @@ def smartAttack():
     else:
         if len(flareAtkBar) > 0:
             sleepShort();
-            print("Flare Bombing...");
-            flareAtkBar[0].click();
+            if len(flareAtkBar) > 1:
+                print("Flare Bombing 1...");
+                flareAtkBar[1].click();
+            else:
+                print("Flare Bombing...");
+                flareAtkBar[0].click();
         elif len(heavyAtkBar) >0:
             sleepShort();
             print("Heavy Attacking...");
@@ -250,13 +254,11 @@ def smartAttack():
 def checkSpecialStatus():
     driver.get_screenshot_as_file('./Screenshot/remedy.png');
     heartFillIcon = driver.find_elements_by_xpath("//*[contains(text(), 'heart_fill')]/..");
-    for i in range(10):
-        if(len(heartFillIcon) > 0):
-            print("Uses Remedy...");
-            sleepShort();
-            heartFillIcon[0].click();
-        else:
-            break;
+    if(len(heartFillIcon) > 0):
+        print("Uses Remedy...");
+        sleepShort();
+        heartFillIcon[0].click();
+
 
 def checkDeath():
     respawnBar = driver.find_elements_by_xpath("//*[starts-with(.,'Respawn where')]/..");
