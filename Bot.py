@@ -11,7 +11,7 @@ import os, re
 
 
 def printStartMsg():
-    print("======================Titan Conquest Bot v3 =========================");
+    print("======================Titan Conquest Bot v3.2 =========================");
     print("Written by JensonWee(GitHub)");
     print("Free Usage for all :)")
     print ("=" * 70)
@@ -21,6 +21,11 @@ def cleanUpProcess():
     os.system('taskkill /F /IM "chrome.exe"');
     os.system('taskkill /F /IM "chromedriver.exe"');
     print("="*10)
+
+
+def waitObject(xpath):
+    element_present = EC.presence_of_element_located((By.XPATH, xpath))
+    WebDriverWait(driver, 10).until(element_present)
 
 cleanUpProcess();
 options = webdriver.ChromeOptions()
@@ -33,16 +38,22 @@ def loadPage():
     time.sleep(2);
 def sleepShort():
     time.sleep(0.5);
+
+def getElements(xpath):
+    return driver.find_elements_by_xpath(xpath);
+def getElement(xpath):
+    return driver.find_element_by_xpath(xpath);
+
 def logIn():
     #Remove Notification
     #myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH,  "//button[text()='No Thanks']")))
     driver.get("https://titanconquest.com/")
     loadPage();
-    notiButton = driver.find_elements_by_xpath("//button[text()='No Thanks']");
+    notiButton = getElements("//button[text()='No Thanks']");
     if len(notiButton) > 0 :
         notiButton[0].click();
     time.sleep(1);
-    loginBar = driver.find_element_by_xpath("//div[text()='Login to your Account']");
+    loginBar = getElement("//div[text()='Login to your Account']");
     loginBar.click();
     loadPage();
     # Log in
@@ -50,7 +61,7 @@ def logIn():
     userName.send_keys(username);
     passWord = driver.find_element_by_name("password");
     passWord.send_keys(password);
-    submitBtn = driver.find_element_by_xpath("//input[@type='submit']");
+    submitBtn = getElement("//input[@type='submit']");
     submitBtn.click();
     loadPage();
 
@@ -175,9 +186,9 @@ def selectMob(Mob,arg2):
 def checkDefeatedMob():
     driver.get_screenshot_as_file('./Screenshot/defeated.png');
     sleepShort();
-    defeatBar = driver.find_elements_by_xpath("//*[starts-with(.,'Back to')]");
-    if len(defeatBar) > 0:
-        defeatBar[0].click()
+    defeatBar = "//*[starts-with(.,'Back to')]";
+    if len(getElements(defeatBar)) > 0:
+        getElements(defeatBar)[0].click()
         return True;
     else:
         return False;
@@ -215,49 +226,51 @@ def heavyAttack():
         sleepShort()
         heavyAtkBar[0].click();
 
+
 def smartAttack():
     driver.get_screenshot_as_file('./Screenshot/smartAtk.png');
-    shieldBar = driver.find_elements_by_xpath("//div[@class='progress shield']");
-    heavyAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Heavy (')]/..");
-    hitAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Hit it')]");
-    flareAtkBar = driver.find_elements_by_xpath("//span[@class='actionimg'][starts-with(.,'Flare Bomb')]");
-    primaryAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Primary')]/..");
-    specialAtkBar = driver.find_elements_by_xpath("//*[starts-with(.,'Special (')]/..");
-    loadPage()
+    shieldBar = "//div[@class='progress shield']";
+    heavyAtkBar = "//*[starts-with(.,'Heavy (')]/..";
+    hitAtkBar = "//*[starts-with(.,'Hit it')]";
+    flareAtkBar = "//span[@class='actionimg'][starts-with(.,'Flare Bomb')]";
+    primaryAtkBar = "//*[starts-with(.,'Primary')]/..";
+    specialAtkBar = "//*[starts-with(.,'Special (')]/..";
+
     checkSpecialStatus(); #Uses remedy
-    if len(shieldBar) > 0:
-        sleepShort();
+    if len(getElements(shieldBar)) > 0:
+        waitObject(specialAtkBar);
         print("Special Attacking...");
-        specialAtkBar[0].click();
+        getElements(specialAtkBar)[0].click();
     else:
-        if len(flareAtkBar) > 0:
-            sleepShort();
-            if len(flareAtkBar) > 1:
+        if len(getElements(flareAtkBar)) > 0:
+            waitObject(flareAtkBar);
+            if len(getElements(flareAtkBar)) > 1:
                 print("Flare Bombing 1...");
-                flareAtkBar[1].click();
+                getElements(flareAtkBar)[1].click();
             else:
                 print("Flare Bombing...");
-                flareAtkBar[0].click();
-        elif len(heavyAtkBar) >0:
-            sleepShort();
+                getElements(flareAtkBar)[0].click();
+        elif len(getElements(heavyAtkBar)) >0:
+            waitObject(heavyAtkBar);
             print("Heavy Attacking...");
-            heavyAtkBar[0].click();
-        elif len(hitAtkBar) > 0:
-            sleepShort();
+            getElements(heavyAtkBar)[0].click();
+        elif len(getElements(hitAtkBar)) > 0:
+            waitObject(hitAtkBar);
             print("Hitting it...");
-            hitAtkBar[0].click();
+            getElements(hitAtkBar)[0].click();
         else:
-            sleepShort();
+            waitObject(primaryAtkBar);
             print("Primary Attacking...");
-            primaryAtkBar[0].click();
+            getElements(primaryAtkBar)[0].click();
 
 def checkSpecialStatus():
     driver.get_screenshot_as_file('./Screenshot/remedy.png');
-    heartFillIcon = driver.find_elements_by_xpath("//*[contains(text(), 'heart_fill')]/..");
-    if(len(heartFillIcon) > 0):
+    heartFillIcon = "//*[contains(text(), 'heart_fill')]/..";
+    if(len(getElements(heartFillIcon)) > 0):
+        waitObject(heartFillIcon);
         print("Uses Remedy...");
         sleepShort();
-        heartFillIcon[0].click();
+        getElements(heartFillIcon)[0].click();
 
 
 def checkDeath():
@@ -325,9 +338,15 @@ username = re.findall(r'\".*?\"', f.readline())[0].replace('"', '');
 password = re.findall(r'\".*?\"', f.readline())[0].replace('"', '');
 luckyday = re.findall(r'\".*?\"', f.readline())[0].replace('"', '');
 printStartMsg()
-logIn();
-printStatus();
-goPatrol();
-#grindBounty(True, "Chiron Knight", True);
-grindPatrol(True);
 
+while True:
+    try:
+        logIn();
+        printStatus();
+        goPatrol();
+        #grindBounty(True, "Chiron Knight", True);
+        grindPatrol(True);
+    except:
+        print("Run failed. Re-running....");
+        cleanUpProcess();
+        driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
